@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=60", "setuptools-scm>=8.0", "wheel"]
+
+[project]
+name = "FLiESLUT"
+version = "1.0.0"
+description = "Forest Light Environmental Simulator (FLiES) Radiative Transfer Model Artificial Neural Network (ANN) Implementation in Python"
+readme = "README.md"
+authors = [
+    { name = "Gregory H. Halverson", email = "gregory.h.halverson@jpl.nasa.gov" },
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "geos5fp",
+    "keras==2.15",
+    "koppengeiger",
+    "numpy<2",
+    "pandas",
+    "rasters",
+    "sentinel-tiles",
+    "solar-apparent-time",
+    "sun-angles",
+    "tensorflow==2.15.1"
+]
+
+requires-python = ">=3.11"
+
+[tool.setuptools.package-data]
+FLiESLUT = ["*.txt", "*.h5"]
+
+[project.urls]
+"Homepage" = "https://github.com/JPL-Evapotranspiration-Algorithms/FLiESLUT"
