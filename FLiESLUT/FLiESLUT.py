@@ -22,6 +22,7 @@ from geos5fp import GEOS5FP
 from MCD12C1_2019_v006 import load_MCD12C1_IGBP
 from koppengeiger import load_koppen_geiger
 from solar_apparent_time import UTC_to_solar
+from sun_angles import calculate_SZA_from_DOY_and_hour
 
 __author__ = "Gregory Halverson, Robert Freepartner"
 
@@ -251,7 +252,6 @@ def FLiES_LUT(
 
 def process_FLiES_LUT_raster(
         geometry: RasterGeometry,
-        target: str,
         time_UTC: Union[datetime, str],
         cloud_mask: Raster = None,
         COT: Raster = None,
@@ -267,7 +267,7 @@ def process_FLiES_LUT_raster(
         time_UTC = parser.parse(time_UTC)
 
     date_UTC = time_UTC.date()
-    time_solar = UTC_to_solar(time_UTC)
+    time_solar = UTC_to_solar(time_UTC, lon=geometry.centroid_latlon.x)
     date_solar = time_solar.date()
     day_of_year = date_solar.timetuple().tm_yday
 
@@ -277,7 +277,7 @@ def process_FLiES_LUT_raster(
         cloud_mask = np.array(cloud_mask)
 
     if GEOS5FP_connection is None:
-        GEOS5FP_connection = GEOS5FP(directory=GEOS5FP_directory)
+        GEOS5FP_connection = GEOS5FP(working_directory=GEOS5FP_directory)
 
     if COT is None:
         COT = GEOS5FP_connection.COT(time_UTC=time_UTC, geometry=geometry)
@@ -304,7 +304,13 @@ def process_FLiES_LUT_raster(
     albedo = np.array(albedo)
 
     if SZA is None:
-        SZA = GEOS5FP_connection.SZA(day_of_year=day_of_year, hour_of_day=hour_of_day, geometry=geometry)
+        # SZA = GEOS5FP_connection.SZA(day_of_year=day_of_year, hour_of_day=hour_of_day, geometry=geometry)
+        SZA = calculate_SZA_from_DOY_and_hour(
+            lat=geometry.lat,
+            lon=geometry.lon,
+            DOY=day_of_year, 
+            hour=time_solar.hour
+        )
 
     SZA = np.array(SZA)
 
