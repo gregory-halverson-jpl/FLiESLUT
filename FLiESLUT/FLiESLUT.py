@@ -4,6 +4,7 @@ Artificial Neural Network Implementation
 for the Breathing Earth Systems Simulator (BESS)
 """
 
+from typing import Union
 import logging
 import warnings
 from datetime import datetime
@@ -18,12 +19,9 @@ import rasters as rt
 from rasters import RasterGeometry, Raster
 
 from geos5fp import GEOS5FP
-from MCD12C1_2019_v006 import load_MCD12C1_raster
-
-# FIXME separate ECOSTRESS Collection 2 sub-modules to packages
-from ..SRTM import SRTM
-# from ..MCD12.MCD12C1 import MCD12C1
-from .FLiES import FLiES
+from MCD12C1_2019_v006 import load_MCD12C1_IGBP
+from koppengeiger import load_koppen_geiger
+from solar_apparent_time import UTC_to_solar
 
 __author__ = "Gregory Halverson, Robert Freepartner"
 
@@ -251,129 +249,82 @@ def FLiES_LUT(
 
     return SWin
 
+def process_FLiES_LUT_raster(
+        geometry: RasterGeometry,
+        target: str,
+        time_UTC: Union[datetime, str],
+        cloud_mask: Raster = None,
+        COT: Raster = None,
+        koppen_geiger: Raster = None,
+        IGBP: Raster = None,
+        cloud_top: Raster = None,
+        albedo: Raster = None,
+        SZA: Raster = None,
+        AOT: Raster = None,
+        GEOS5FP_connection: GEOS5FP = None,
+        GEOS5FP_directory: str = "."):
+    if isinstance(time_UTC, str):
+        time_UTC = parser.parse(time_UTC)
 
-class FLiESLUT(FLiES):
-    logger = logging.getLogger(__name__)
+    date_UTC = time_UTC.date()
+    time_solar = UTC_to_solar(time_UTC)
+    date_solar = time_solar.date()
+    day_of_year = date_solar.timetuple().tm_yday
 
-    def __init__(
-            self,
-            working_directory: str = None,
-            static_directory: str = None,
-            SRTM_connection: SRTM = None,
-            SRTM_download: str = None,
-            GEOS5FP_connection: GEOS5FP = None,
-            GEOS5FP_download: str = None,
-            GEOS5FP_products: str = None,
-            # MCD12_connnection: MCD12C1 = None,
-            # MCD12_download: str = None,
-            intermediate_directory: str = None,
-            preview_quality: int = DEFAULT_PREVIEW_QUALITY,
-            ANN_model: Callable = None,
-            ANN_model_filename: str = MODEL_FILENAME,
-            resampling: str = DEFAULT_RESAMPLING,
-            save_intermediate: bool = DEFAULT_SAVE_INTERMEDIATE,
-            show_distribution: bool = DEFAULT_SHOW_DISTRIBUTION,
-            include_preview: bool = DEFAULT_INCLUDE_PREVIEW,
-            dynamic_atype_ctype: bool = DEFAULT_DYNAMIC_ATYPE_CTYPE):
-        super(FLiESLUT, self).__init__(
-            working_directory=working_directory,
-            static_directory=static_directory,
-            SRTM_connection=SRTM_connection,
-            SRTM_download=SRTM_download,
-            GEOS5FP_connection=GEOS5FP_connection,
-            GEOS5FP_download=GEOS5FP_download,
-            GEOS5FP_products=GEOS5FP_products,
-            intermediate_directory=intermediate_directory,
-            preview_quality=preview_quality,
-            ANN_model=ANN_model,
-            ANN_model_filename=ANN_model_filename,
-            resampling=resampling,
-            save_intermediate=save_intermediate,
-            show_distribution=show_distribution,
-            include_preview=include_preview
-        )
+    if cloud_mask is None:
+        cloud_mask = np.full(geometry.shape, 0)
+    else:
+        cloud_mask = np.array(cloud_mask)
 
-        self.ANN_model = ANN_model
-        self.dynamic_atype_ctype = dynamic_atype_ctype
+    if GEOS5FP_connection is None:
+        GEOS5FP_connection = GEOS5FP(directory=GEOS5FP_directory)
 
-        # if MCD12_connnection is None:
-        #     MCD12_connnection = MCD12C1(
-        #         working_directory=static_directory,
-        #         download_directory=MCD12_download
-        #     )
+    if COT is None:
+        COT = GEOS5FP_connection.COT(time_UTC=time_UTC, geometry=geometry)
 
-        # self.MCD12 = MCD12_connnection
+    COT = np.clip(COT, 0, None)
+    COT = np.where(COT < 0.001, 0, COT)
+    COT = np.array(COT)
 
-    def FLiES_LUT(
-            self,
-            geometry: RasterGeometry,
-            target: str,
-            time_UTC: datetime or str,
-            cloud_mask: Raster = None,
-            COT: Raster = None,
-            koppen_geiger: Raster = None,
-            IGBP: Raster = None,
-            cloud_top: Raster = None,
-            albedo: Raster = None,
-            SZA: Raster = None,
-            AOT: Raster = None):
-        if isinstance(time_UTC, str):
-            time_UTC = parser.parse(time_UTC)
+    if koppen_geiger is None:
+        koppen_geiger = load_koppen_geiger(geometry=geometry)
 
-        date_UTC = time_UTC.date()
-        hour_of_day = self.hour_of_day(time_UTC=time_UTC, geometry=geometry)
-        day_of_year = self.day_of_year(time_UTC=time_UTC, geometry=geometry)
+    koppen_geiger = np.array(koppen_geiger)
+    
+    if IGBP is None:
+        IGBP = load_MCD12C1_IGBP(geometry=geometry)
+    
+    IGBP = np.array(IGBP)
 
-        if cloud_mask is None:
-            cloud_mask = np.full(geometry.shape, 0)
-        else:
-            cloud_mask = np.array(cloud_mask)
+    if cloud_top is None:
+        cloud_top = np.full(geometry.shape, np.nan)
+    else:
+        cloud_top = np.array(cloud_top)
 
-        if COT is None:
-            COT = self.COT(time_UTC=time_UTC, geometry=geometry)
+    albedo = np.array(albedo)
 
-        COT = np.clip(COT, 0, None)
-        COT = rt.where(COT < 0.001, 0, COT)
-        self.diagnostic(COT, "COT", date_UTC, target)
+    if SZA is None:
+        SZA = GEOS5FP_connection.SZA(day_of_year=day_of_year, hour_of_day=hour_of_day, geometry=geometry)
 
-        COT = np.array(COT)
+    SZA = np.array(SZA)
 
-        koppen_geiger = np.array(koppen_geiger)
-        IGBP = np.array(IGBP)
+    if AOT is None:
+        AOT = GEOS5FP_connection.AOT(time_UTC=time_UTC, geometry=geometry)
 
-        if cloud_top is None:
-            cloud_top = np.full(geometry.shape, np.nan)
-        else:
-            cloud_top = np.array(cloud_top)
+    AOT = np.array(AOT)
 
-        albedo = np.array(albedo)
+    SWin = FLiES_LUT(
+        doy=day_of_year,
+        cloud_mask=cloud_mask,
+        COT=COT,
+        koppen_geiger=koppen_geiger,
+        IGBP=IGBP,
+        cloud_top=cloud_top,
+        albedo=albedo,
+        SZA=SZA,
+        AOT=AOT
+    )
 
-        if SZA is None:
-            SZA = self.SZA(day_of_year=day_of_year, hour_of_day=hour_of_day, geometry=geometry)
+    SWin = Raster(SWin, geometry=geometry)
 
-        self.diagnostic(SZA, "SZA", date_UTC, target)
-
-        SZA = np.array(SZA)
-
-        if AOT is None:
-            AOT = self.AOT(time_UTC=time_UTC, geometry=geometry)
-
-        self.diagnostic(AOT, "AOT", date_UTC, target)
-
-        AOT = np.array(AOT)
-
-        SWin = FLiES_LUT(
-            doy=day_of_year,
-            cloud_mask=cloud_mask,
-            COT=COT,
-            koppen_geiger=koppen_geiger,
-            IGBP=IGBP,
-            cloud_top=cloud_top,
-            albedo=albedo,
-            SZA=SZA,
-            AOT=AOT
-        )
-
-        SWin = Raster(SWin, geometry=geometry)
-
-        return SWin
+    return SWin

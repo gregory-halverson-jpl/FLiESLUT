@@ -18,6 +18,7 @@ dependencies = [
     "keras==2.15",
     "koppengeiger",
     "MCD12C1-2019-v006",
+    "NetCDF4",
     "numpy<2",
     "pandas",
     "rasters",
