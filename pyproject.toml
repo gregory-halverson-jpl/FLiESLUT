@@ -17,6 +17,7 @@ dependencies = [
     "geos5fp",
     "keras==2.15",
     "koppengeiger",
+    "MCD12C1-2019-v006",
     "numpy<2",
     "pandas",
     "rasters",
