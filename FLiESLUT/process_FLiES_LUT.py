@@ -2,28 +2,35 @@ import numpy as np
 
 from .FLiES_lookup import FLiES_lookup
 
-def FLiES_LUT(
-        doy,
-        cloud_mask,
-        COT,
-        koppen_geiger,
-        IGBP,
-        cloud_top,
-        albedo,
-        SZA,
-        AOT):
-    """
-    This function processes the lookup-table implementation of the Forest Light Environmental Simulator.
-    :param doy: day of year
-    :param cloud_mask:
-    :param COT:
-    :param koppen_geiger:
-    :param IGBP:
-    :param cloud_top:
-    :param albedo:
-    :param SZA:
-    :param AOT:
-    :return:
+def process_FLiES_LUT(
+        doy: np.ndarray,
+        cloud_mask: np.ndarray,
+        COT: np.ndarray,
+        koppen_geiger: np.ndarray,
+        IGBP: np.ndarray,
+        cloud_top: np.ndarray,
+        albedo: np.ndarray,
+        SZA: np.ndarray,
+        AOT: np.ndarray) -> np.ndarray:
+    """Processes the FLiES look-up table to calculate shortwave incoming radiation.
+
+    This function uses the FLiES look-up table implementation to calculate `SWin` based on various
+    input parameters. It determines cloud type and aerosol type, then uses the `FLiES_lookup` function
+    to calculate `SWin`. Finally, it constrains `SWin` to the top-of-atmosphere value and masks invalid data.
+
+    Args:
+      doy: Day of year (or days of year).
+      cloud_mask: Boolean array indicating cloud presence (True for cloudy, False for clear).
+      COT: Cloud optical thickness (or thicknesses).
+      koppen_geiger: Koppen-Geiger climate classification code (or codes).
+      IGBP: International Geosphere-Biosphere Programme land cover classification code (or codes).
+      cloud_top: Cloud top pressure level (or levels) in Pa.
+      albedo: Surface albedo (or albedos).
+      SZA: Solar zenith angle (or angles) in degrees.
+      AOT: Aerosol optical thickness (or thicknesses).
+
+    Returns:
+      A NumPy array containing the calculated `SWin` values.
     """
 
     # set cloud type by cloud mask and koppen geiger
