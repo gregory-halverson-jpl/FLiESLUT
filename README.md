@@ -16,7 +16,7 @@ Japan Agency for Marine-Earth Science and Technology
 ## Installation
 
 ```
-git clone git@github.com:JPL-Evapotranspiration-Algorithms/FLiES.git
+git clone git@github.com:JPL-Evapotranspiration-Algorithms/FLiESLUT.git
 cd FLiES
 mamba install pykdtree
 pip install .
