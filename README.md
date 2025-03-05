@@ -15,11 +15,18 @@ Japan Agency for Marine-Earth Science and Technology
 
 ## Installation
 
+The `FLiESLUT` package is available as a [pip package](https://pypi.org/project/FLiESLUT/) from PyPi:
+
 ```
-git clone git@github.com:JPL-Evapotranspiration-Algorithms/FLiESLUT.git
-cd FLiES
-mamba install pykdtree
-pip install .
+pip install FLiESLUT
+```
+
+## Usage
+
+Import the `FLiESLUT` package as `FLiESLUT`:
+
+```
+import FLiESLUT
 ```
 
 ## References
