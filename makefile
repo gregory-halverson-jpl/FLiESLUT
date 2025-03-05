@@ -1,8 +1,6 @@
-.PHONY: dist
-
-ENVIRONMENT_NAME = FLiESLUT
-PACKAGE_NAME = flieslut
-DOCKER_IMAGE_NAME = flieslut
+PACKAGE_NAME = FLiESLUT
+ENVIRONMENT_NAME = $(PACKAGE_NAME)
+DOCKER_IMAGE_NAME = $(shell echo $(PACKAGE_NAME) | tr '[:upper:]' '[:lower:]')
 
 clean:
 	rm -rf *.o *.out *.log
@@ -41,6 +39,9 @@ reinstall:
 
 environment:
 	mamba create -y -n $(ENVIRONMENT_NAME) -c conda-forge python=3.10
+
+remove-environment:
+	mamba env remove -y -n $(ENVIRONMENT_NAME)
 
 colima-start:
 	colima start -m 16 -a x86_64 -d 100 
