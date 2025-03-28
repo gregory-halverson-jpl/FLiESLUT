@@ -3,7 +3,7 @@ requires = ["setuptools>=60", "setuptools-scm>=8.0", "wheel"]
 
 [project]
 name = "FLiESLUT"
-version = "1.0.1"
+version = "1.0.2"
 description = "Forest Light Environmental Simulator (FLiES) Radiative Transfer Model Look-Up Table (LUT) Implementation in Python"
 readme = "README.md"
 authors = [
@@ -14,7 +14,7 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "geos5fp",
+    "GEOS5FP>=1.1.1",
     "keras==2.15",
     "koppengeiger",
     "MCD12C1-2019-v006",

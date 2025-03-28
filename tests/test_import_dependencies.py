@@ -2,7 +2,7 @@ import pytest
 
 # List of dependencies
 dependencies = [
-    "geos5fp",
+    "GEOS5FP",
     "keras",
     "koppengeiger",
     "MCD12C1_2019_v006",

@@ -4,7 +4,7 @@ from typing import Union
 import numpy as np
 from MCD12C1_2019_v006 import load_MCD12C1_IGBP
 from dateutil import parser
-from geos5fp import GEOS5FP
+from GEOS5FP import GEOS5FP
 from koppengeiger import load_koppen_geiger
 from rasters import RasterGeometry, Raster
 from solar_apparent_time import UTC_to_solar
