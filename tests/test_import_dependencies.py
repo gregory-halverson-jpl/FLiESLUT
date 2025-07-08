@@ -3,7 +3,6 @@ import pytest
 # List of dependencies
 dependencies = [
     "GEOS5FP",
-    "keras",
     "koppengeiger",
     "MCD12C1_2019_v006",
     "netCDF4",
@@ -12,8 +11,7 @@ dependencies = [
     "rasters",
     "sentinel_tiles",
     "solar_apparent_time",
-    "sun_angles",
-    "tensorflow"
+    "sun_angles"
 ]
 
 # Generate individual test functions for each dependency
