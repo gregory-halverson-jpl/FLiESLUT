@@ -15,7 +15,6 @@ classifiers = [
 ]
 dependencies = [
     "GEOS5FP>=1.1.1",
-    "keras==2.15",
     "koppengeiger",
     "MCD12C1-2019-v006",
     "NetCDF4",
