@@ -12,8 +12,7 @@ dependencies = [
     "rasters",
     "sentinel_tiles",
     "solar_apparent_time",
-    "sun_angles",
-    "tensorflow"
+    "sun_angles"
 ]
 
 # Generate individual test functions for each dependency
