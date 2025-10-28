@@ -24,8 +24,7 @@ def process_FLiES_LUT_raster(
         albedo: Raster = None,
         SZA: Raster = None,
         AOT: Raster = None,
-        GEOS5FP_connection: GEOS5FP = None,
-        GEOS5FP_directory: str = ".") -> Raster:
+        GEOS5FP_connection: GEOS5FP = None) -> Raster:
     """Calculates shortwave incoming radiation for a raster using the FLiES look-up table.
 
     This function processes a raster to calculate `SWin` using the FLiES look-up table. It handles
@@ -45,8 +44,6 @@ def process_FLiES_LUT_raster(
       SZA: Optional solar zenith angle raster in degrees.
       AOT: Optional aerosol optical thickness raster.
       GEOS5FP_connection: Optional `GEOS5FP` connection object for retrieving missing data.
-      GEOS5FP_directory: Optional working directory for the `GEOS5FP` connection.
-                          Defaults to the current directory.
 
     Returns:
       A `Raster` object containing the calculated `SWin` values.
@@ -65,7 +62,7 @@ def process_FLiES_LUT_raster(
         cloud_mask = np.array(cloud_mask)
 
     if GEOS5FP_connection is None:
-        GEOS5FP_connection = GEOS5FP(working_directory=GEOS5FP_directory)
+        GEOS5FP_connection = GEOS5FP()
 
     if COT is None:
         COT = GEOS5FP_connection.COT(time_UTC=time_UTC, geometry=geometry)

@@ -3,7 +3,7 @@ requires = ["setuptools>=60", "setuptools-scm>=8.0", "wheel"]
 
 [project]
 name = "FLiESLUT"
-version = "1.0.3"
+version = "1.0.4"
 description = "Forest Light Environmental Simulator (FLiES) Radiative Transfer Model Look-Up Table (LUT) Implementation in Python"
 readme = "README.md"
 authors = [
