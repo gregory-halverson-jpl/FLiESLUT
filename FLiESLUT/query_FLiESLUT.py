@@ -2,7 +2,7 @@ import netCDF4
 import numpy as np
 
 
-def query_FLiES(
+def query_FLiESLUT(
         filename: str,
         ctype: np.ndarray,
         atype: np.ndarray,

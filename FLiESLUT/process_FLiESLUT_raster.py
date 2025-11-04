@@ -10,10 +10,10 @@ from rasters import RasterGeometry, Raster
 from solar_apparent_time import UTC_to_solar
 from sun_angles import calculate_SZA_from_DOY_and_hour
 
-from .process_FLiES_LUT import process_FLiES_LUT
+from .process_FLiESLUT import process_FLiESLUT
 
 
-def process_FLiES_LUT_raster(
+def process_FLiESLUT_raster(
         geometry: RasterGeometry,
         time_UTC: Union[datetime, str],
         cloud_mask: Raster = None,
@@ -103,7 +103,7 @@ def process_FLiES_LUT_raster(
 
     AOT = np.array(AOT)
 
-    SWin = process_FLiES_LUT(
+    SWin = process_FLiESLUT(
         doy=day_of_year,
         cloud_mask=cloud_mask,
         COT=COT,

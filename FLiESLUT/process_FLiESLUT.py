@@ -2,7 +2,7 @@ import numpy as np
 
 from .FLiES_lookup import FLiES_lookup
 
-def process_FLiES_LUT(
+def process_FLiESLUT(
         doy: np.ndarray,
         cloud_mask: np.ndarray,
         COT: np.ndarray,

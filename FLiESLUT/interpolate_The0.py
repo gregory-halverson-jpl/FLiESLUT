@@ -1,7 +1,7 @@
 import numpy as np
 import rasters as rt
 
-from .query_FLiES import query_FLiES
+from .query_FLiESLUT import query_FLiESLUT
 
 def interpolate_The0(filename: str,
                      ctype: np.ndarray,
@@ -40,7 +40,7 @@ def interpolate_The0(filename: str,
     The0_index_high = np.clip(np.ceil(The0 / 5.0).astype(np.int32) - 1, 0, 16).astype(np.int32)
 
     # query closest incoming shortwave
-    SWin_The0_low = query_FLiES(
+    SWin_The0_low = query_FLiESLUT(
         filename,
         ctype,
         atype,
@@ -52,7 +52,7 @@ def interpolate_The0(filename: str,
     )
 
     # query next closest incoming shortwave
-    SWin_The0_high = query_FLiES(
+    SWin_The0_high = query_FLiESLUT(
         filename,
         ctype,
         atype,

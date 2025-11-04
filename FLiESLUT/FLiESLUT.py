@@ -6,4 +6,4 @@ for the Breathing Earth Systems Simulator (BESS)
 
 __author__ = "Gregory Halverson"
 
-from .process_FLiES_LUT_raster import process_FLiES_LUT_raster
+from .process_FLiESLUT_raster import process_FLiESLUT_raster
