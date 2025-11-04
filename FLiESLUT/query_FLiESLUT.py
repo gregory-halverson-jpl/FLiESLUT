@@ -1,5 +1,10 @@
-import netCDF4
 import numpy as np
+
+try:
+    import netCDF4
+    _HAS_NETCDF4 = True
+except ImportError:
+    _HAS_NETCDF4 = False
 
 
 def query_FLiESLUT(
@@ -30,5 +35,8 @@ def query_FLiESLUT(
     Returns:
       A NumPy array containing the `SWin` values corresponding to the input indices.
     """
+    if not _HAS_NETCDF4:
+        raise ImportError("netCDF4 is required for query_FLiESLUT. Install it with: pip install netcdf4")
+    
     with netCDF4.Dataset(filename, 'r') as f:
         return f['SWin'][0][ctype, atype, ctop_index, albedo_index, The0_index, ctauref_index, tauref_index]
