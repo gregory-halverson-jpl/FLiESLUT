@@ -38,8 +38,11 @@ dev = [
     "twine"
 ]
 
+[tool.setuptools.packages.find]
+exclude = ["notebooks*", "references*", "examples*"]
+
 [tool.setuptools.package-data]
-FLiESLUT = ["*.txt", "*.nc"]
+FLiESLUT = ["*.nc"]
 
 [project.urls]
 "Homepage" = "https://github.com/JPL-Evapotranspiration-Algorithms/FLiESLUT"
